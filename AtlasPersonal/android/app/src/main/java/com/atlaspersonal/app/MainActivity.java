@@ -1,0 +1,5 @@
+package com.atlaspersonal.app;
+
+import com.getcapacitor.BridgeActivity;
+
+public class MainActivity extends BridgeActivity {}
