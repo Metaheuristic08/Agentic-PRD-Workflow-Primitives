@@ -12,10 +12,12 @@
 
 | Tecnología | Versión | Justificación | Notas |
 |:-----------|:--------|:--------------|:------|
-| **React Native** | `0.72.x` | Cross-platform iOS/Android con una única codebase | Actualizar a stable releases, no canary |
-| **TypeScript** | `5.2.x` | Type safety, mejor DX, menos bugs | Strict mode habilitado |
+| **Angular** | `20.3.x` | Framework moderno para WebApp con capacidades móviles | Framework completo con herramientas integradas |
+| **Capacitor** | `6.1.x` | Puente nativo para convertir WebApp en APK/iOS | Permite acceso a APIs nativas desde web |
+| **TypeScript** | `5.9.x` | Type safety, mejor DX, menos bugs | Strict mode habilitado |
 | **Node.js** | `18.x LTS` | Runtime para tools y scripts | Usar versiones LTS únicamente |
-| **Yarn** | `1.22.x` | Gestor de paquetes consistente | Lockfile commiteado siempre |
+| **npm** | `10.x` | Gestor de paquetes consistente | Lockfile commiteado siempre |
+| **SCSS** | Latest | Pre-procesador CSS | Para estilos estructurados y variables |
 
 ### 1.2 Backend & Servicios
 
@@ -26,34 +28,28 @@
 | **Firebase Storage** | Latest SDK | Photo/video blob storage |
 | **Firebase Cloud Functions** | Node.js 18 | Image compression, webhooks |
 | **Firebase Hosting** | Latest | Privacy policy, terms of service |
-| **Mapbox GL Native** | `10.x` | Map rendering engine |
+| **Mapbox GL JS** | Latest | Map rendering engine para web |
 | **RevenueCat** | Latest SDK | In-app subscription management |
 | **Mixpanel** | Latest SDK | Analytics event tracking |
-| **Sentry** | `5.x` | Error tracking & crash reporting |
+| **Sentry** | Latest | Error tracking & crash reporting |
 
-### 1.3 Librerías Principales
+### 1.3 Capacitor Plugins
 
-| Librería | Versión | Propósito |
-|:---------|:--------|:----------|
-| `@react-navigation/native` | `6.x` | App navigation |
-| `redux` + `@reduxjs/toolkit` | `2.x` + `1.9.x` | State management |
-| `redux-persist` | `6.x` | Persist Redux state |
-| `react-native-maps` | Latest | Mapbox wrapper |
-| `react-native-image-picker` | Latest | Photo selection |
-| `react-native-fast-image` | Latest | Image caching |
-| `@react-native-firebase/*` | Latest | Firebase SDK suite |
-| `react-native-purchases` | Latest | RevenueCat SDK |
-| `i18next` + `react-i18next` | Latest | Internationalization |
+| Plugin | Versión | Propósito |
+|:-------|:--------|:----------|
+| `@capacitor/camera` | `6.1.x` | Acceso a cámara y galería |
+| `@capacitor/filesystem` | `6.0.x` | Acceso al sistema de archivos |
+| `@capacitor/geolocation` | `6.0.x` | Geolocalización GPS |
+| `@capacitor/preferences` | `6.0.x` | Almacenamiento local de preferencias |
 
 ### 1.4 Herramientas de Desarrollo
 
 | Herramienta | Versión | Propósito |
 |:------------|:--------|:----------|
+| **Angular CLI** | `20.3.x` | Scaffolding y build tools |
 | **ESLint** | `8.x` | Linting JavaScript/TypeScript |
-| **Prettier** | `3.x` | Code formatting |
-| **Jest** | `29.x` | Unit testing framework |
-| **React Native Testing Library** | Latest | Component testing |
-| **Detox** | Latest | E2E testing (iOS/Android) |
+| **Prettier** | `2.8.x` | Code formatting |
+| **Karma + Jasmine** | Latest | Unit testing framework |
 | **Husky** | `8.x` | Git hooks |
 | **lint-staged** | Latest | Pre-commit linting |
 
@@ -63,33 +59,39 @@
 
 ### 2.1 Arquitectura General
 
-**Patrón:** Feature-Based Modular Architecture  
+**Patrón:** Feature-Based Modular Architecture con Angular  
 **Justificación:** Escalabilidad, separación de concerns, facilita testing y mantenimiento
 
 ```
 src/
-├── features/          # Feature modules (pins, collections, auth, etc.)
-│   ├── auth/
-│   │   ├── components/
-│   │   ├── screens/
-│   │   ├── hooks/
-│   │   ├── services/
-│   │   ├── types/
-│   │   └── __tests__/
-│   ├── pins/
-│   ├── collections/
-│   └── map/
-├── shared/           # Shared utilities, components, types
-│   ├── components/
-│   ├── hooks/
-│   ├── utils/
-│   ├── types/
-│   └── constants/
-├── navigation/       # Navigation configuration
-├── store/            # Redux store configuration
-├── services/         # External service wrappers (Firebase, Mapbox, etc.)
-├── theme/            # Design system (colors, typography, spacing)
-└── App.tsx           # Root component
+├── app/
+│   ├── features/          # Feature modules (pins, collections, auth, etc.)
+│   │   ├── auth/
+│   │   │   ├── components/
+│   │   │   ├── services/
+│   │   │   ├── models/
+│   │   │   ├── login/
+│   │   │   ├── register/
+│   │   │   └── auth.routes.ts
+│   │   ├── pins/
+│   │   ├── collections/
+│   │   └── map/
+│   ├── core/             # Core services y guards
+│   │   ├── services/     # Servicios singleton (Auth, API, etc.)
+│   │   ├── guards/       # Route guards
+│   │   ├── interceptors/ # HTTP interceptors
+│   │   └── models/       # Modelos compartidos
+│   ├── shared/           # Módulos y componentes reutilizables
+│   │   ├── components/   # Componentes UI reutilizables
+│   │   ├── directives/   # Directivas compartidas
+│   │   ├── pipes/        # Pipes compartidos
+│   │   └── utils/        # Utilidades
+│   ├── app.component.ts  # Root component
+│   ├── app.routes.ts     # Routing configuration
+│   └── app.config.ts     # App configuration
+├── assets/               # Static assets
+├── styles.scss           # Global styles
+└── index.html            # Entry HTML
 ```
 
 ### 2.2 Principios de Diseño de Software (OBLIGATORIOS)
@@ -102,7 +104,7 @@ src/
 - **D**ependency Inversion: Depender de abstracciones, no concreciones
 
 #### Otros Principios
-- **DRY (Don't Repeat Yourself):** Extraer lógica repetida a utilidades/hooks
+- **DRY (Don't Repeat Yourself):** Extraer lógica repetida a servicios/pipes
 - **KISS (Keep It Simple, Stupid):** Preferir soluciones simples y directas
 - **YAGNI (You Aren't Gonna Need It):** No implementar features especulativos
 - **Separation of Concerns:** UI, lógica de negocio y data access separados
@@ -110,21 +112,22 @@ src/
 ### 2.3 Patrones Arquitectónicos Específicos
 
 #### State Management
-- **Redux Toolkit:** Para state global (user, pins, collections)
-- **React Context:** SOLO para theming y i18n (no para business logic)
-- **Local State (useState):** Para UI state temporal (modals, forms)
-- **Server State:** React Query/SWR NO usado en MVP (Firebase handles caching)
+- **NgRx (opcional para MVP):** Para state global complejo (user, pins, collections)
+- **Angular Services (singleton):** Para state compartido entre features
+- **BehaviorSubject/ReplaySubject:** Para reactive state en servicios
+- **Local Component State:** Para UI state temporal (modals, forms)
 
-**Regla de Oro:** Si el state se necesita en >2 screens no relacionadas, va a Redux. Si es local a un feature, queda en local state.
+**Regla de Oro:** Si el state se necesita en >2 features no relacionados, va a un servicio. Si es local a un feature, queda en el componente.
 
 #### Component Patterns
-- **Container/Presentational:** Separar lógica (container) de UI (presentational)
-- **Custom Hooks:** Extraer lógica reutilizable a hooks (ej. `useAuth`, `usePins`)
-- **Composition over Inheritance:** Usar composición de componentes
+- **Smart/Dumb Components:** Separar lógica (smart) de UI (dumb/presentational)
+- **Standalone Components:** Usar standalone components para mejor tree-shaking
+- **Services para lógica:** Extraer lógica de negocio a servicios inyectables
+- **Composition:** Usar composición de componentes y content projection
 
 #### Data Flow
 ```
-User Action → Dispatch Redux Action → Thunk/Saga → Firebase Service → Update Redux State → Re-render Component
+User Action → Component Method → Service Method → HTTP/Capacitor API → Update Observable → Component subscribes → Re-render
 ```
 
 ---
@@ -138,15 +141,16 @@ User Action → Dispatch Redux Action → Thunk/Saga → Firebase Service → Up
 | Variables | `camelCase` | `const userName = ...` | Descriptivas, no abreviar |
 | Constants | `UPPER_SNAKE_CASE` | `const MAX_PIN_COUNT = 100` | Solo para valores inmutables |
 | Functions | `camelCase` | `function createPin() {}` | Verbos o frases verbales |
-| React Components | `PascalCase` | `function PinCard() {}` | Sustantivos |
+| Angular Components | `PascalCase` | `export class PinCardComponent` | Sufijo `Component` |
+| Services | `PascalCase` | `export class PinService` | Sufijo `Service` |
 | TypeScript Types | `PascalCase` | `type PinData = {...}` | |
-| Interfaces | `PascalCase` con `I` prefix | `interface IUserService` | Solo para abstracciones |
+| Interfaces | `PascalCase` | `interface Pin` | Sin prefijo `I` |
 | Enums | `PascalCase` | `enum PinCategory` | Valores en UPPER_SNAKE_CASE |
-| Archivos (Components) | `PascalCase.tsx` | `PinCard.tsx` | Match component name |
-| Archivos (Utilities) | `camelCase.ts` | `dateUtils.ts` | |
-| Folders | `kebab-case` o `camelCase` | `pin-detail/` o `pinDetail/` | Consistencia en todo el proyecto |
-| Redux Actions | `UPPER_SNAKE_CASE` | `CREATE_PIN_REQUEST` | Con feature prefix |
-| Test Files | `*.test.tsx` | `PinCard.test.tsx` | Mismo nombre que archivo testeado |
+| Archivos (Components) | `kebab-case.component.ts` | `pin-card.component.ts` | Con sufijo .component |
+| Archivos (Services) | `kebab-case.service.ts` | `pin.service.ts` | Con sufijo .service |
+| Archivos (Utilities) | `kebab-case.ts` | `date-utils.ts` | |
+| Folders | `kebab-case` | `pin-detail/` | Consistencia en todo el proyecto |
+| Test Files | `*.spec.ts` | `pin-card.component.spec.ts` | Mismo nombre que archivo testeado |
 
 **Ejemplos Completos:**
 ```typescript
