@@ -1,0 +1,16 @@
+<div class="home-container">
+  <section class="welcome">
+    <h2>Bienvenido a Atlas Personal</h2>
+    <p>Tu memoria visual geográfica</p>
+  </section>
+
+  <section class="features-grid">
+    <div class="feature-card" *ngFor="let feature of features">
+      <a [routerLink]="feature.route">
+        <div class="feature-icon">{{ feature.icon }}</div>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </a>
+    </div>
+  </section>
+</div>
